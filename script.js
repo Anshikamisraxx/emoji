@@ -1,102 +1,113 @@
-body {
-    margin: 0;
-    height: 100vh;
-    background: radial-gradient(circle, #0f0f0f, #000);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    overflow: hidden;
-    transition: background 0.5s ease;
+const characters = document.querySelectorAll(".character");
+const texts = document.querySelectorAll(".speech");
+
+/* 🧠 State */
+let memory = [0, 0, 0];
+let moods = ["happy", "happy", "happy"];
+
+/* 💬 Dialogues */
+const dialogues = {
+    happy: ["Hi 😄", "Nice vibes ✨", "Chill 😌"],
+    sad: ["I'm tired 😢", "Why 😔", "This hurts 😭"],
+    angry: ["STOP 😡", "ENOUGH 😤", "I'M MAD 😠"]
+};
+
+function random(arr) {
+    return arr[Math.floor(Math.random() * arr.length)];
 }
 
-/* Titles */
-.title {
-    position: absolute;
-    top: 20px;
-    color: white;
-    font-size: 26px;
+/* 🎭 Personality logic */
+function updateMoods() {
+    moods = moods.map((m, i) => {
+        if (i === 0) {
+            if (memory[i] < 4) return "happy";
+            if (memory[i] < 7) return "sad";
+            return "angry";
+        }
+        if (i === 1) {
+            if (memory[i] < 2) return "happy";
+            if (memory[i] < 4) return "sad";
+            return "angry";
+        }
+        if (i === 2) {
+            if (memory[i] < 2) return "happy";
+            return "angry";
+        }
+    });
 }
 
-.subtitle {
-    position: absolute;
-    top: 55px;
-    color: gray;
-    font-size: 14px;
+/* 🔗 Influence */
+function applyInfluence() {
+    if (moods.includes("angry")) {
+        memory = memory.map((m, i) =>
+            moods[i] === "angry" ? m : m + 1
+        );
+    }
+
+    if (moods.every(m => m === "happy")) {
+        memory = memory.map(m => Math.max(0, m - 1));
+    }
 }
 
-/* Room */
-.room {
-    width: 100%;
-    height: 100%;
-    position: relative;
+/* 🎬 Screen shake */
+function shakeScreen() {
+    document.body.style.transform = "translate(5px)";
+    setTimeout(() => {
+        document.body.style.transform = "translate(-5px)";
+    }, 50);
+    setTimeout(() => {
+        document.body.style.transform = "translate(0px)";
+    }, 100);
 }
 
-/* Character */
-.character {
-    position: absolute;
-    text-align: center;
-    cursor: pointer;
-    animation: float 3s ease-in-out infinite;
-    transition: all 0.3s ease;
+/* 🌈 Background */
+function updateBackground() {
+    if (moods.includes("angry")) {
+        document.body.style.background = "radial-gradient(circle, #330000, #000)";
+        shakeScreen();
+    } else if (moods.includes("sad")) {
+        document.body.style.background = "radial-gradient(circle, #001f3f, #000)";
+    } else {
+        document.body.style.background = "radial-gradient(circle, #0f0f0f, #000)";
+    }
 }
 
-.character:active {
-    transform: scale(1.2);
+/* 🎬 Render */
+function render() {
+    characters.forEach((char, i) => {
+        const face = char.querySelector(".face");
+
+        face.classList.remove("happy", "sad", "angry");
+        face.classList.add(moods[i]);
+
+        texts[i].textContent = random(dialogues[moods[i]]);
+    });
+
+    updateBackground();
 }
 
-/* Floating animation */
-@keyframes float {
-    0% { transform: translateY(0px); }
-    50% { transform: translateY(-15px); }
-    100% { transform: translateY(0px); }
-}
+/* 🎮 Click */
+characters.forEach((char, index) => {
+    char.addEventListener("click", () => {
+        memory[index]++;
+        updateMoods();
+        applyInfluence();
+        render();
+    });
+});
 
-/* Positioning */
-#char1 { left: 20%; top: 40%; animation-duration: 3s; }
-#char2 { left: 50%; top: 60%; animation-duration: 4s; }
-#char3 { left: 75%; top: 35%; animation-duration: 3.5s; }
+/* 💬 Auto conversation */
+setInterval(() => {
+    const i = Math.floor(Math.random() * 3);
+    memory[i]++;
+    updateMoods();
+    applyInfluence();
+    render();
+}, 2000);
 
-/* Face */
-.face {
-    width: 120px;
-    height: 120px;
-    border-radius: 50%;
-    margin-bottom: 8px;
-    transition: all 0.4s ease;
-}
-
-/* Mood colors + glow */
-.happy {
-    background: linear-gradient(145deg, #ffd93d, #ffb703);
-    box-shadow: 0 0 25px #ffd93d;
-}
-
-.sad {
-    background: linear-gradient(145deg, #89cff0, #0077b6);
-    box-shadow: 0 0 25px #0077b6;
-}
-
-.angry {
-    background: linear-gradient(145deg, #ff4d4d, #990000);
-    box-shadow: 0 0 25px #ff0000;
-    animation: pulse 0.6s infinite;
-}
-
-/* Pulse animation */
-@keyframes pulse {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.05); }
-    100% { transform: scale(1); }
-}
-
-/* Text */
-.name {
-    color: white;
-    font-size: 14px;
-}
-
-.speech {
-    color: white;
-    font-size: 12px;
-    min-height: 16px;
-}
+/* ⏳ Cooldown */
+setInterval(() => {
+    memory = memory.map(m => Math.max(0, m - 1));
+    updateMoods();
+    render();
+}, 4000);
