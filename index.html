@@ -1,17 +1,23 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Emoji Tap</title>
-    <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<title>Emoji Tap Game</title>
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
 
 <div class="container">
     <div id="emoji">😄</div>
-    <p>Tap me</p>
+    <p>Tap fast!</p>
+
+    <div class="stats">
+        <p>Score: <span id="score">0</span></p>
+        <p>Streak: <span id="streak">0</span> 🔥</p>
+    </div>
 </div>
+
+<audio id="tapSound" src="https://www.soundjay.com/buttons/sounds/button-16.mp3"></audio>
 
 <script src="script.js"></script>
 </body>
