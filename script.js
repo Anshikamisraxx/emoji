@@ -1,6 +1,6 @@
 const characters = document.querySelectorAll(".character");
 const pupils = document.querySelectorAll(".pupil");
-const texts = document.querySelectorAll(".speech");
+const eyes = document.querySelectorAll(".eye");
 
 let memory = [0, 0, 0];
 let moods = ["happy", "happy", "happy"];
@@ -10,14 +10,22 @@ document.addEventListener("mousemove", (e) => {
     pupils.forEach((pupil) => {
         const rect = pupil.parentElement.getBoundingClientRect();
 
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
+        const dx = e.clientX - (rect.left + rect.width/2);
+        const dy = e.clientY - (rect.top + rect.height/2);
 
-        pupil.style.transform = `translate(${x/20}px, ${y/20}px)`;
+        pupil.style.transform = `translate(${dx/20}px, ${dy/20}px)`;
     });
 });
 
-/* 🎭 Personality */
+/* 👁️ Blinking */
+setInterval(() => {
+    eyes.forEach(eye => {
+        eye.classList.add("blink");
+        setTimeout(() => eye.classList.remove("blink"), 150);
+    });
+}, 3000);
+
+/* 🎭 Mood logic */
 function updateMoods() {
     moods = moods.map((m, i) => {
         if (memory[i] < 3) return "happy";
@@ -34,7 +42,9 @@ function render() {
         face.classList.remove("happy", "sad", "angry");
         face.classList.add(moods[i]);
 
-        texts[i].textContent = moods[i];
+        /* talking effect */
+        char.classList.add("talk");
+        setTimeout(() => char.classList.remove("talk"), 300);
     });
 }
 
@@ -46,3 +56,11 @@ characters.forEach((char, i) => {
         render();
     });
 });
+
+/* 💬 Auto life */
+setInterval(() => {
+    const i = Math.floor(Math.random() * 3);
+    memory[i]++;
+    updateMoods();
+    render();
+}, 2000);
