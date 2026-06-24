@@ -1,27 +1,43 @@
 body {
     margin: 0;
     height: 100vh;
-    background: linear-gradient(135deg, #1a1a1a, #000);
+    background: radial-gradient(circle, #111, #000);
     display: flex;
     justify-content: center;
     align-items: center;
-    font-family: sans-serif;
     color: white;
+    font-family: sans-serif;
+    overflow: hidden;
 }
 
-/* Container */
 .container {
     text-align: center;
-    cursor: pointer;
 }
 
-/* Emoji */
 #emoji {
     font-size: 100px;
-    transition: transform 0.2s ease;
+    cursor: pointer;
+    transition: 0.2s;
 }
 
-/* Tap animation */
-#emoji:active {
-    transform: scale(1.3);
+.animate {
+    transform: scale(1.4) rotate(10deg);
+}
+
+/* Stats */
+.stats {
+    margin-top: 20px;
+    font-size: 18px;
+}
+
+/* Explosion */
+.particle {
+    position: absolute;
+    font-size: 24px;
+    animation: explode 0.8s forwards;
+}
+
+@keyframes explode {
+    0% { opacity: 1; transform: translate(0,0); }
+    100% { opacity: 0; transform: translate(var(--x), var(--y)); }
 }
