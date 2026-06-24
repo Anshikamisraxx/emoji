@@ -1,83 +1,66 @@
-const emoji = document.getElementById("emoji");
-const scoreEl = document.getElementById("score");
-const streakEl = document.getElementById("streak");
-const sound = document.getElementById("tapSound");
+window.onload = function () {
 
-let score = 0;
-let streak = 0;
-let lastTap = Date.now();
+    const emoji = document.getElementById("emoji");
+    const scoreEl = document.getElementById("score");
+    const streakEl = document.getElementById("streak");
 
-/* Emoji set */
-const emojis = [
-    "😄","😂","😍","😎","🤩","😜","😈",
-    "😭","😡","😱","🤯",
-    "👻","💀","🤖",
-    "🐶","🐱","🦁",
-    "🍕","🍔","🍟",
-    "⚽","🎮","🎧",
-    "❤️","🔥","✨","⚡","🌈"
-];
+    let score = 0;
+    let streak = 0;
+    let lastTap = Date.now();
 
-function randomEmoji() {
-    return emojis[Math.floor(Math.random() * emojis.length)];
-}
+    const emojis = ["😄","😂","😍","😎","🤩","😜","😈","😭","😡","😱","🤯","👻","💀","🤖","🐶","🐱","🦁","🍕","🍔","🍟","⚽","🎮","🎧","❤️","🔥","✨","⚡","🌈"];
 
-/* Explosion */
-function explode(x, y) {
-    for (let i = 0; i < 10; i++) {
-        const p = document.createElement("div");
-        p.className = "particle";
-        p.textContent = randomEmoji();
-
-        const angle = Math.random() * 2 * Math.PI;
-        const dist = 80 + Math.random() * 60;
-
-        p.style.left = x + "px";
-        p.style.top = y + "px";
-        p.style.setProperty("--x", Math.cos(angle)*dist + "px");
-        p.style.setProperty("--y", Math.sin(angle)*dist + "px");
-
-        document.body.appendChild(p);
-        setTimeout(() => p.remove(), 800);
-    }
-}
-
-/* Click */
-emoji.addEventListener("click", (e) => {
-
-    const now = Date.now();
-    const diff = now - lastTap;
-
-    // ⏱️ streak logic
-    if (diff < 800) {
-        streak++;
-    } else {
-        streak = 0;
+    function randomEmoji() {
+        return emojis[Math.floor(Math.random() * emojis.length)];
     }
 
-    lastTap = now;
+    function explode(x, y) {
+        for (let i = 0; i < 8; i++) {
+            const p = document.createElement("div");
+            p.className = "particle";
+            p.textContent = randomEmoji();
 
-    // 🎯 scoring
-    score += 1 + Math.floor(streak / 3);
+            const angle = Math.random() * 2 * Math.PI;
+            const dist = 80 + Math.random() * 40;
 
-    // update UI
-    scoreEl.textContent = score;
-    streakEl.textContent = streak;
+            p.style.left = x + "px";
+            p.style.top = y + "px";
+            p.style.setProperty("--x", Math.cos(angle)*dist + "px");
+            p.style.setProperty("--y", Math.sin(angle)*dist + "px");
 
-    // change emoji
-    emoji.textContent = randomEmoji();
+            document.body.appendChild(p);
+            setTimeout(() => p.remove(), 800);
+        }
+    }
 
-    // animation
-    emoji.classList.add("animate");
-    setTimeout(() => emoji.classList.remove("animate"), 200);
+    emoji.addEventListener("click", (e) => {
 
-    // explosion
-    explode(e.clientX, e.clientY);
+        console.log("clicked"); // 👈 DEBUG
 
-    // sound
-    sound.currentTime = 0;
-    sound.play();
+        const now = Date.now();
+        const diff = now - lastTap;
 
-    // vibration
-    if (navigator.vibrate) navigator.vibrate(50);
-});
+        if (diff < 800) {
+            streak++;
+        } else {
+            streak = 0;
+        }
+
+        lastTap = now;
+
+        score += 1 + Math.floor(streak / 3);
+
+        scoreEl.textContent = score;
+        streakEl.textContent = streak;
+
+        emoji.textContent = randomEmoji();
+
+        emoji.classList.add("animate");
+        setTimeout(() => emoji.classList.remove("animate"), 200);
+
+        explode(e.clientX, e.clientY);
+
+        if (navigator.vibrate) navigator.vibrate(50);
+    });
+
+};
