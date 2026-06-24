@@ -1,66 +1,83 @@
-const characters = document.querySelectorAll(".character");
-const pupils = document.querySelectorAll(".pupil");
-const eyes = document.querySelectorAll(".eye");
+const emoji = document.getElementById("emoji");
+const scoreEl = document.getElementById("score");
+const streakEl = document.getElementById("streak");
+const sound = document.getElementById("tapSound");
 
-let memory = [0, 0, 0];
-let moods = ["happy", "happy", "happy"];
+let score = 0;
+let streak = 0;
+let lastTap = Date.now();
 
-/* 👁️ Eye tracking */
-document.addEventListener("mousemove", (e) => {
-    pupils.forEach((pupil) => {
-        const rect = pupil.parentElement.getBoundingClientRect();
+/* Emoji set */
+const emojis = [
+    "😄","😂","😍","😎","🤩","😜","😈",
+    "😭","😡","😱","🤯",
+    "👻","💀","🤖",
+    "🐶","🐱","🦁",
+    "🍕","🍔","🍟",
+    "⚽","🎮","🎧",
+    "❤️","🔥","✨","⚡","🌈"
+];
 
-        const dx = e.clientX - (rect.left + rect.width/2);
-        const dy = e.clientY - (rect.top + rect.height/2);
-
-        pupil.style.transform = `translate(${dx/20}px, ${dy/20}px)`;
-    });
-});
-
-/* 👁️ Blinking */
-setInterval(() => {
-    eyes.forEach(eye => {
-        eye.classList.add("blink");
-        setTimeout(() => eye.classList.remove("blink"), 150);
-    });
-}, 3000);
-
-/* 🎭 Mood logic */
-function updateMoods() {
-    moods = moods.map((m, i) => {
-        if (memory[i] < 3) return "happy";
-        if (memory[i] < 6) return "sad";
-        return "angry";
-    });
+function randomEmoji() {
+    return emojis[Math.floor(Math.random() * emojis.length)];
 }
 
-/* 🎬 Render */
-function render() {
-    characters.forEach((char, i) => {
-        const face = char.querySelector(".face");
+/* Explosion */
+function explode(x, y) {
+    for (let i = 0; i < 10; i++) {
+        const p = document.createElement("div");
+        p.className = "particle";
+        p.textContent = randomEmoji();
 
-        face.classList.remove("happy", "sad", "angry");
-        face.classList.add(moods[i]);
+        const angle = Math.random() * 2 * Math.PI;
+        const dist = 80 + Math.random() * 60;
 
-        /* talking effect */
-        char.classList.add("talk");
-        setTimeout(() => char.classList.remove("talk"), 300);
-    });
+        p.style.left = x + "px";
+        p.style.top = y + "px";
+        p.style.setProperty("--x", Math.cos(angle)*dist + "px");
+        p.style.setProperty("--y", Math.sin(angle)*dist + "px");
+
+        document.body.appendChild(p);
+        setTimeout(() => p.remove(), 800);
+    }
 }
 
-/* 🎮 Click */
-characters.forEach((char, i) => {
-    char.addEventListener("click", () => {
-        memory[i]++;
-        updateMoods();
-        render();
-    });
-});
+/* Click */
+emoji.addEventListener("click", (e) => {
 
-/* 💬 Auto life */
-setInterval(() => {
-    const i = Math.floor(Math.random() * 3);
-    memory[i]++;
-    updateMoods();
-    render();
-}, 2000);
+    const now = Date.now();
+    const diff = now - lastTap;
+
+    // ⏱️ streak logic
+    if (diff < 800) {
+        streak++;
+    } else {
+        streak = 0;
+    }
+
+    lastTap = now;
+
+    // 🎯 scoring
+    score += 1 + Math.floor(streak / 3);
+
+    // update UI
+    scoreEl.textContent = score;
+    streakEl.textContent = streak;
+
+    // change emoji
+    emoji.textContent = randomEmoji();
+
+    // animation
+    emoji.classList.add("animate");
+    setTimeout(() => emoji.classList.remove("animate"), 200);
+
+    // explosion
+    explode(e.clientX, e.clientY);
+
+    // sound
+    sound.currentTime = 0;
+    sound.play();
+
+    // vibration
+    if (navigator.vibrate) navigator.vibrate(50);
+});
