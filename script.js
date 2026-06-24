@@ -1,75 +1,29 @@
 const characters = document.querySelectorAll(".character");
+const pupils = document.querySelectorAll(".pupil");
 const texts = document.querySelectorAll(".speech");
 
-/* 🧠 State */
 let memory = [0, 0, 0];
 let moods = ["happy", "happy", "happy"];
 
-/* 💬 Dialogues */
-const dialogues = {
-    happy: ["Hi 😄", "Nice vibes ✨", "Chill 😌"],
-    sad: ["I'm tired 😢", "Why 😔", "This hurts 😭"],
-    angry: ["STOP 😡", "ENOUGH 😤", "I'M MAD 😠"]
-};
+/* 👁️ Eye tracking */
+document.addEventListener("mousemove", (e) => {
+    pupils.forEach((pupil) => {
+        const rect = pupil.parentElement.getBoundingClientRect();
 
-function random(arr) {
-    return arr[Math.floor(Math.random() * arr.length)];
-}
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
 
-/* 🎭 Personality logic */
+        pupil.style.transform = `translate(${x/20}px, ${y/20}px)`;
+    });
+});
+
+/* 🎭 Personality */
 function updateMoods() {
     moods = moods.map((m, i) => {
-        if (i === 0) {
-            if (memory[i] < 4) return "happy";
-            if (memory[i] < 7) return "sad";
-            return "angry";
-        }
-        if (i === 1) {
-            if (memory[i] < 2) return "happy";
-            if (memory[i] < 4) return "sad";
-            return "angry";
-        }
-        if (i === 2) {
-            if (memory[i] < 2) return "happy";
-            return "angry";
-        }
+        if (memory[i] < 3) return "happy";
+        if (memory[i] < 6) return "sad";
+        return "angry";
     });
-}
-
-/* 🔗 Influence */
-function applyInfluence() {
-    if (moods.includes("angry")) {
-        memory = memory.map((m, i) =>
-            moods[i] === "angry" ? m : m + 1
-        );
-    }
-
-    if (moods.every(m => m === "happy")) {
-        memory = memory.map(m => Math.max(0, m - 1));
-    }
-}
-
-/* 🎬 Screen shake */
-function shakeScreen() {
-    document.body.style.transform = "translate(5px)";
-    setTimeout(() => {
-        document.body.style.transform = "translate(-5px)";
-    }, 50);
-    setTimeout(() => {
-        document.body.style.transform = "translate(0px)";
-    }, 100);
-}
-
-/* 🌈 Background */
-function updateBackground() {
-    if (moods.includes("angry")) {
-        document.body.style.background = "radial-gradient(circle, #330000, #000)";
-        shakeScreen();
-    } else if (moods.includes("sad")) {
-        document.body.style.background = "radial-gradient(circle, #001f3f, #000)";
-    } else {
-        document.body.style.background = "radial-gradient(circle, #0f0f0f, #000)";
-    }
 }
 
 /* 🎬 Render */
@@ -80,34 +34,15 @@ function render() {
         face.classList.remove("happy", "sad", "angry");
         face.classList.add(moods[i]);
 
-        texts[i].textContent = random(dialogues[moods[i]]);
+        texts[i].textContent = moods[i];
     });
-
-    updateBackground();
 }
 
 /* 🎮 Click */
-characters.forEach((char, index) => {
+characters.forEach((char, i) => {
     char.addEventListener("click", () => {
-        memory[index]++;
+        memory[i]++;
         updateMoods();
-        applyInfluence();
         render();
     });
 });
-
-/* 💬 Auto conversation */
-setInterval(() => {
-    const i = Math.floor(Math.random() * 3);
-    memory[i]++;
-    updateMoods();
-    applyInfluence();
-    render();
-}, 2000);
-
-/* ⏳ Cooldown */
-setInterval(() => {
-    memory = memory.map(m => Math.max(0, m - 1));
-    updateMoods();
-    render();
-}, 4000);
