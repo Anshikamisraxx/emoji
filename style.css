@@ -1,118 +1,27 @@
 body {
     margin: 0;
-    background: radial-gradient(circle, #0f0f0f, #000);
-    overflow: hidden;
-}
-
-/* Room */
-.room {
-    width: 100%;
     height: 100vh;
-    position: relative;
-}
-
-/* Character */
-.character {
-    position: absolute;
-    animation: float 4s infinite ease-in-out;
-}
-
-/* Floating */
-@keyframes float {
-    0%,100% { transform: translateY(0); }
-    50% { transform: translateY(-20px); }
-}
-
-/* Face */
-.face {
-    width: 120px;
-    height: 120px;
-    border-radius: 50%;
-    position: relative;
-    transition: 0.3s;
-}
-
-/* Eyes */
-.eyes {
-    position: absolute;
-    top: 30px;
-    width: 100%;
+    background: linear-gradient(135deg, #1a1a1a, #000);
     display: flex;
-    justify-content: space-around;
+    justify-content: center;
+    align-items: center;
+    font-family: sans-serif;
+    color: white;
 }
 
-.eye {
-    width: 25px;
-    height: 25px;
-    background: black;
-    border-radius: 50%;
-    overflow: hidden;
+/* Container */
+.container {
+    text-align: center;
+    cursor: pointer;
 }
 
-.pupil {
-    width: 10px;
-    height: 10px;
-    background: white;
-    border-radius: 50%;
-    position: relative;
-    top: 7px;
-    left: 7px;
+/* Emoji */
+#emoji {
+    font-size: 100px;
+    transition: transform 0.2s ease;
 }
 
-/* Blink */
-.eye.blink {
-    height: 5px;
+/* Tap animation */
+#emoji:active {
+    transform: scale(1.3);
 }
-
-/* Mouth */
-.mouth {
-    position: absolute;
-    bottom: 25px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 50px;
-    height: 20px;
-    border: 3px solid black;
-    border-top: none;
-    border-radius: 0 0 50px 50px;
-    transition: 0.3s;
-}
-
-/* Talking */
-.talk .mouth {
-    height: 30px;
-}
-
-/* HAPPY */
-.happy {
-    background: #ffd93d;
-}
-
-/* SAD */
-.sad {
-    background: #89cff0;
-}
-.sad .mouth {
-    border-radius: 50px 50px 0 0;
-    transform: translateX(-50%) rotate(180deg);
-}
-
-/* ANGRY */
-.angry {
-    background: #ff4d4d;
-    animation: shake 0.2s infinite;
-}
-
-/* Shake */
-@keyframes shake {
-    0% { transform: translate(0); }
-    25% { transform: translate(2px, -2px); }
-    50% { transform: translate(-2px, 2px); }
-    75% { transform: translate(2px, 2px); }
-    100% { transform: translate(-2px, -2px); }
-}
-
-/* Positions */
-.character:nth-child(1) { left: 20%; top: 40%; }
-.character:nth-child(2) { left: 50%; top: 60%; }
-.character:nth-child(3) { left: 75%; top: 35%; }
