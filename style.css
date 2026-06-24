@@ -1,0 +1,124 @@
+body {
+    margin: 0;
+    background: radial-gradient(circle, #0f0f0f, #000);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+/* Layout */
+.container {
+    display: flex;
+    gap: 40px;
+}
+
+.emoji-box {
+    text-align: center;
+}
+
+/* Face */
+.face {
+    width: 180px;
+    height: 180px;
+    border-radius: 50%;
+    position: relative;
+    cursor: pointer;
+    transition: all 0.3s ease;
+
+    background: linear-gradient(145deg, #ffd93d, #ffb703);
+
+    box-shadow: 0 0 20px #ffb703;
+}
+
+.face:hover {
+    transform: scale(1.1);
+}
+
+/* Eyes */
+.eyes {
+    position: absolute;
+    top: 50px;
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+}
+
+.eye {
+    width: 40px;
+    height: 40px;
+    background: black;
+    border-radius: 50%;
+    position: relative;
+    overflow: hidden;
+}
+
+.pupil {
+    width: 14px;
+    height: 14px;
+    background: white;
+    border-radius: 50%;
+    position: absolute;
+    top: 13px;
+    left: 13px;
+    transition: 0.1s;
+}
+
+/* Mouth */
+.mouth {
+    position: absolute;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+/* Happy */
+.happy .mouth {
+    width: 80px;
+    height: 40px;
+    background: #ff4d6d;
+    border-bottom-left-radius: 40px;
+    border-bottom-right-radius: 40px;
+}
+
+/* Sad */
+.sad {
+    background: linear-gradient(145deg, #89cff0, #0077b6);
+}
+
+.sad .mouth {
+    width: 80px;
+    height: 40px;
+    background: #ff4d6d;
+    border-top-left-radius: 40px;
+    border-top-right-radius: 40px;
+    top: 100px;
+}
+
+/* Angry */
+.angry {
+    background: linear-gradient(145deg, #ff4d4d, #990000);
+}
+
+.angry .eye:first-child {
+    transform: rotate(20deg);
+}
+
+.angry .eye:last-child {
+    transform: rotate(-20deg);
+}
+
+.angry .mouth {
+    width: 60px;
+    height: 10px;
+    background: black;
+    border-radius: 10px;
+}
+
+/* Speech */
+.speech {
+    color: white;
+    margin-top: 10px;
+    font-size: 14px;
+    min-height: 20px;
+}
