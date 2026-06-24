@@ -1,116 +1,102 @@
-const emojis = document.querySelectorAll(".face");
-const pupils = document.querySelectorAll(".pupil");
-const texts = document.querySelectorAll(".speech");
-
-/* 👁️ Eye tracking */
-document.addEventListener("mousemove", (e) => {
-    pupils.forEach((pupil) => {
-        const rect = pupil.parentElement.getBoundingClientRect();
-
-        const centerX = rect.left + rect.width / 2;
-        const centerY = rect.top + rect.height / 2;
-
-        const angle = Math.atan2(e.clientY - centerY, e.clientX - centerX);
-
-        const x = Math.cos(angle) * 8;
-        const y = Math.sin(angle) * 8;
-
-        pupil.style.transform = `translate(${x}px, ${y}px)`;
-    });
-});
-
-/* 🧠 SYSTEM STATE */
-let memory = [0, 0, 0];
-let moods = ["happy", "happy", "happy"];
-
-/* Dialogues */
-const dialogues = {
-    happy: ["All good 😄", "Chill 😌", "Nice vibes ✨"],
-    sad: ["I'm down 😢", "This hurts 😔", "Why 😭"],
-    angry: ["STOP 😡", "ENOUGH 😤", "I'M MAD 😠"]
-};
-
-function random(arr) {
-    return arr[Math.floor(Math.random() * arr.length)];
+body {
+    margin: 0;
+    height: 100vh;
+    background: radial-gradient(circle, #0f0f0f, #000);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    transition: background 0.5s ease;
 }
 
-/* 🎭 Click interaction */
-emojis.forEach((emoji, index) => {
-    emoji.addEventListener("click", () => {
-
-        memory[index]++;
-
-        // Personality
-        emojis.forEach((e, i) => {
-
-            if (i === 0) {
-                if (memory[i] < 4) moods[i] = "happy";
-                else if (memory[i] < 7) moods[i] = "sad";
-                else moods[i] = "angry";
-            }
-
-            if (i === 1) {
-                if (memory[i] < 2) moods[i] = "happy";
-                else if (memory[i] < 4) moods[i] = "sad";
-                else moods[i] = "angry";
-            }
-
-            if (i === 2) {
-                if (memory[i] < 2) moods[i] = "happy";
-                else moods[i] = "angry";
-            }
-
-        });
-
-        applyEffects();
-    });
-});
-
-/* 🔗 Influence + Chain reaction */
-function applyEffects() {
-
-    let newMoods = [...moods];
-
-    for (let i = 0; i < moods.length; i++) {
-
-        if (moods[i] === "angry") {
-            newMoods = newMoods.map((m, idx) =>
-                idx === i ? "angry" : "sad"
-            );
-        }
-
-        else if (moods[i] === "sad") {
-            newMoods = newMoods.map((m) =>
-                m === "happy" ? "sad" : m
-            );
-        }
-
-        else if (moods[i] === "happy") {
-            newMoods = newMoods.map((m) =>
-                m === "sad" ? "happy" : m
-            );
-        }
-    }
-
-    moods = newMoods;
-
-    emojis.forEach((e, i) => {
-        e.classList.remove("happy", "sad", "angry");
-        e.classList.add(moods[i]);
-        texts[i].textContent = random(dialogues[moods[i]]);
-    });
+/* Titles */
+.title {
+    position: absolute;
+    top: 20px;
+    color: white;
+    font-size: 26px;
 }
 
-/* ⏳ Cooldown system */
-setInterval(() => {
+.subtitle {
+    position: absolute;
+    top: 55px;
+    color: gray;
+    font-size: 14px;
+}
 
-    for (let i = 0; i < memory.length; i++) {
-        if (memory[i] > 0) memory[i]--;
+/* Room */
+.room {
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
 
-        if (memory[i] < 2) moods[i] = "happy";
-        else if (memory[i] < 5) moods[i] = "sad";
-    }
+/* Character */
+.character {
+    position: absolute;
+    text-align: center;
+    cursor: pointer;
+    animation: float 3s ease-in-out infinite;
+    transition: all 0.3s ease;
+}
 
-    applyEffects();
+.character:active {
+    transform: scale(1.2);
+}
 
-}, 3000);
+/* Floating animation */
+@keyframes float {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-15px); }
+    100% { transform: translateY(0px); }
+}
+
+/* Positioning */
+#char1 { left: 20%; top: 40%; animation-duration: 3s; }
+#char2 { left: 50%; top: 60%; animation-duration: 4s; }
+#char3 { left: 75%; top: 35%; animation-duration: 3.5s; }
+
+/* Face */
+.face {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    margin-bottom: 8px;
+    transition: all 0.4s ease;
+}
+
+/* Mood colors + glow */
+.happy {
+    background: linear-gradient(145deg, #ffd93d, #ffb703);
+    box-shadow: 0 0 25px #ffd93d;
+}
+
+.sad {
+    background: linear-gradient(145deg, #89cff0, #0077b6);
+    box-shadow: 0 0 25px #0077b6;
+}
+
+.angry {
+    background: linear-gradient(145deg, #ff4d4d, #990000);
+    box-shadow: 0 0 25px #ff0000;
+    animation: pulse 0.6s infinite;
+}
+
+/* Pulse animation */
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+/* Text */
+.name {
+    color: white;
+    font-size: 14px;
+}
+
+.speech {
+    color: white;
+    font-size: 12px;
+    min-height: 16px;
+}
